@@ -1,5 +1,18 @@
 const { App, LogLevel } = require("@slack/bolt");
+const fetch = require("node-fetch-commonjs");
 require("dotenv").config();
+
+async function fetchMorningGif(searchQuery = "good morning") {
+  return fetch(
+    `https://api.giphy.com/v1/gifs/search?api_key=${process.env.GIPHY_API_KEY}&q=${searchQuery}`
+  )
+    .then((res) => res.json())
+    .then((json) => {
+      const random = Math.floor(Math.random() * json.data.length);
+
+      return json.data[random].images.original.url;
+    });
+}
 
 const app = new App({
   token: process.env.SLACK_TOKEN,
@@ -23,6 +36,25 @@ app.command("/square", async ({ command, ack, say }) => {
     console.log("err");
     console.error(error);
   }
+});
+
+app.message(/gm/, async ({ message, say }) => {
+  const gifUrl = await fetchMorningGif();
+  console.log("app.message -> gifUrl", gifUrl);
+
+  await say({
+    blocks: [
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: `Good morning <@${message.user}>!\n${gifUrl}
+          `,
+        },
+      },
+    ],
+    text: `Good morning <@${message.user}>!\n${gifUrl}`,
+  });
 });
 
 (async () => {
