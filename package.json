@@ -1,0 +1,18 @@
+{
+  "name": "good-morning-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@slack/bolt": "^3.11.1"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.1"
+  }
+}
