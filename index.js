@@ -1,4 +1,4 @@
-const { App } = require("@slack/bolt");
+const { App, LogLevel } = require("@slack/bolt");
 require("dotenv").config();
 
 const app = new App({
@@ -6,6 +6,7 @@ const app = new App({
   signingSecret: process.env.SLACK_SIGNING_SECRET,
   socketMode: true,
   appToken: process.env.SLACK_APP_TOKEN,
+  logLevel: LogLevel.DEBUG,
 });
 
 app.command("/square", async ({ command, ack, say }) => {
