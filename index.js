@@ -1,6 +1,12 @@
 const { App, LogLevel } = require("@slack/bolt");
 const fetch = require("node-fetch-commonjs");
+const data = require("./data.json");
 require("dotenv").config();
+
+const now = () => Math.floor(Date.now() / 1000);
+
+const getRandomGif = () =>
+  data.data[Math.floor(Math.random() * data.data.length)].images.original.url;
 
 async function fetchMorningGif(searchQuery = "good morning") {
   return fetch(
@@ -40,7 +46,6 @@ app.command("/square", async ({ command, ack, say }) => {
 
 app.message(/gm/, async ({ message, say }) => {
   const gifUrl = await fetchMorningGif();
-  console.log("app.message -> gifUrl", gifUrl);
 
   await say({
     blocks: [
@@ -59,7 +64,28 @@ app.message(/gm/, async ({ message, say }) => {
 
 (async () => {
   const port = 3000;
-  // Start your app
+
   await app.start(process.env.PORT || port);
-  console.log(`⚡️ Slack Bolt app is running on port ${port}!`);
+  console.log(`🔥 Slack Bolt app is running on port ${port}! 🔥`);
 })();
+
+app.client.chat.scheduleMessage({
+  token: process.env.SLACK_TOKEN,
+  channel: "general",
+  text: "Good morning! ☀️\n" + getRandomGif(),
+  post_at: now() + 15,
+});
+
+// function isWeekend(date = new Date()) {
+//   return date.getDay() === 5 || date.getDay() === 6;
+// }
+
+// // Check if it's not the weekend and that is it 10:00 AM
+// if (!isWeekend() && new Date().getHours() === 10) {
+//   app.client.chat.scheduleMessage({
+//     token: process.env.SLACK_TOKEN,
+//     channel: "general",
+//     text: "Good morning! ☀️\n" + getRandomGif(),
+//     post_at: now() + 15,
+//   });
+// }
