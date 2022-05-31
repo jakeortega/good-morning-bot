@@ -1,24 +1,12 @@
 const { App, LogLevel } = require("@slack/bolt");
-const fetch = require("node-fetch-commonjs");
-const data = require("./data.json");
+const {
+  isWeekend,
+  getRandomGif,
+  getRandomEmoji,
+  fetchMorningGif,
+} = require("./utils");
+
 require("dotenv").config();
-
-const now = () => Math.floor(Date.now() / 1000);
-
-const getRandomGif = () =>
-  data.data[Math.floor(Math.random() * data.data.length)].images.original.url;
-
-async function fetchMorningGif(searchQuery = "good morning") {
-  return fetch(
-    `https://api.giphy.com/v1/gifs/search?api_key=${process.env.GIPHY_API_KEY}&q=${searchQuery}`
-  )
-    .then((res) => res.json())
-    .then((json) => {
-      const random = Math.floor(Math.random() * json.data.length);
-
-      return json.data[random].images.original.url;
-    });
-}
 
 const app = new App({
   token: process.env.SLACK_TOKEN,
@@ -26,22 +14,6 @@ const app = new App({
   socketMode: true,
   appToken: process.env.SLACK_APP_TOKEN,
   logLevel: LogLevel.DEBUG,
-});
-
-app.command("/square", async ({ command, ack, say }) => {
-  try {
-    await ack();
-    let txt = command.text; // The inputted parameters
-    console.log({ command });
-    if (isNaN(txt)) {
-      say(txt + " is not a number");
-    } else {
-      say(txt + " squared = " + parseFloat(txt) * parseFloat(txt));
-    }
-  } catch (error) {
-    console.log("err");
-    console.error(error);
-  }
 });
 
 app.message(/gm/, async ({ message, say }) => {
@@ -53,12 +25,12 @@ app.message(/gm/, async ({ message, say }) => {
         type: "section",
         text: {
           type: "mrkdwn",
-          text: `Good morning <@${message.user}>!\n${gifUrl}
+          text: `Good morning ${getRandomEmoji()} <@${message.user}>!\n${gifUrl}
           `,
         },
       },
     ],
-    text: `Good morning <@${message.user}>!\n${gifUrl}`,
+    text: `Good morning ${getRandomEmoji()} <@${message.user}>!\n${gifUrl}`,
   });
 });
 
@@ -69,23 +41,35 @@ app.message(/gm/, async ({ message, say }) => {
   console.log(`🔥 Slack Bolt app is running on port ${port}! 🔥`);
 })();
 
-app.client.chat.scheduleMessage({
-  token: process.env.SLACK_TOKEN,
-  channel: "general",
-  text: "Good morning! ☀️\n" + getRandomGif(),
-  post_at: now() + 15,
-});
+/* Scheduled Good Morning */
 
-// function isWeekend(date = new Date()) {
-//   return date.getDay() === 5 || date.getDay() === 6;
-// }
+const NUMBER_OF_DAYS = 5;
+let daysGreeted = [];
+// TODO add a command that adds to daysGreeted and subtracts from the NUMBER_OF_DAYS array if there's a day off
 
-// // Check if it's not the weekend and that is it 10:00 AM
-// if (!isWeekend() && new Date().getHours() === 10) {
-//   app.client.chat.scheduleMessage({
-//     token: process.env.SLACK_TOKEN,
-//     channel: "general",
-//     text: "Good morning! ☀️\n" + getRandomGif(),
-//     post_at: now() + 15,
-//   });
-// }
+function loop() {
+  setTimeout(() => {
+    const day = new Date().getDay();
+    const hour = new Date().getHours();
+    const isSentToday = daysGreeted.includes(day);
+
+    if (!isWeekend() && !isSentToday && hour >= 9 && hour <= 10) {
+      app.client.chat.postMessage({
+        token: process.env.SLACK_TOKEN,
+        channel: "general",
+        text: "Good morning! ☀️\n" + getRandomGif(),
+        as_user: true,
+      });
+      daysGreeted.push(day);
+    }
+
+    if (daysGreeted.length === NUMBER_OF_DAYS) {
+      daysGreeted = [];
+    }
+
+    console.log({ daysGreeted, isSentToday });
+    loop();
+  }, 1000 * 60 * 30 * Math.random());
+}
+
+loop();
