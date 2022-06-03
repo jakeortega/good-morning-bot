@@ -1,10 +1,11 @@
+// TODO Migrate to typescript
 const { App, LogLevel } = require('@slack/bolt');
 const { isWeekend, getRandomEmoji, fetchMorningGif } = require('./utils');
 const botDMs = require('./utils/botDMs');
 
 require('dotenv').config();
-const { SLACK_TOKEN, SLACK_USER_TOKEN, SLACK_SIGNING_SECRET, SLACK_APP_TOKEN, USER_ID, GENERAL_CHANNEL_ID, PORT } =
-  process.env;
+
+const { SLACK_TOKEN, SLACK_USER_TOKEN, SLACK_SIGNING_SECRET, SLACK_APP_TOKEN, USER_ID, PORT } = process.env;
 
 const app = new App({
   token: SLACK_TOKEN,
@@ -30,7 +31,7 @@ const app = new App({
 const NUM_OF_WORK_DAYS = 5;
 let daysGreeted = [];
 
-const sendMessage = async ({ channel = GENERAL_CHANNEL_ID, as_user = true } = {}) => {
+const sendMessage = async ({ channel = 'general', as_user = true } = {}) => {
   const gif = await fetchMorningGif();
 
   await app.client.chat.postMessage({
