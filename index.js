@@ -18,7 +18,9 @@ const app = new App({
 });
 
 (async () => {
-  await app.start(process.env.PORT || 3000);
+  const port = process.env.PORT || port;
+
+  await app.start(port);
   await botDMs(app);
 
   console.log(`🔥 Slack Bolt app is running on port ${port}! 🔥`);
