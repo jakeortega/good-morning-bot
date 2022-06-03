@@ -1,10 +1,6 @@
 const { App, LogLevel } = require("@slack/bolt");
-const {
-  isWeekend,
-  getRandomGif,
-  getRandomEmoji,
-  fetchMorningGif,
-} = require("./utils");
+const { isWeekend, getRandomEmoji, fetchMorningGif } = require("./utils");
+const botDMs = require("./botDMs");
 
 require("dotenv").config();
 
@@ -16,28 +12,12 @@ const app = new App({
   logLevel: LogLevel.DEBUG,
 });
 
-app.message(/gm/, async ({ message, say }) => {
-  const gifUrl = await fetchMorningGif();
-
-  await say({
-    blocks: [
-      {
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text: `Good morning ${getRandomEmoji()} <@${message.user}>!\n${gifUrl}
-          `,
-        },
-      },
-    ],
-    text: `Good morning ${getRandomEmoji()} <@${message.user}>!\n${gifUrl}`,
-  });
-});
-
 (async () => {
   const port = 3000;
 
   await app.start(process.env.PORT || port);
+  await botDMs(app);
+
   console.log(`🔥 Slack Bolt app is running on port ${port}! 🔥`);
 })();
 
@@ -47,19 +27,29 @@ const NUMBER_OF_DAYS = 5;
 let daysGreeted = [];
 // TODO add a command that adds to daysGreeted and subtracts from the NUMBER_OF_DAYS array if there's a day off
 
+const sendMessage = async () => {
+  const gif = await fetchMorningGif();
+
+  await app.client.chat.postMessage({
+    token: process.env.SLACK_TOKEN,
+    channel: "general",
+    text: `Good morning! ${getRandomEmoji()}\n ${gif}`,
+    username: "Daniel Bellmas",
+    icon_url:
+      "https://user-images.githubusercontent.com/76179660/171856608-c109f0bf-4d2b-48d0-b505-2133cf7534d9.jpg",
+  });
+};
+// sendMessage();
+
 function loop() {
   setTimeout(() => {
     const day = new Date().getDay();
     const hour = new Date().getHours();
     const isSentToday = daysGreeted.includes(day);
+    const isMorning = hour >= 8 && hour <= 9;
 
-    if (!isWeekend() && !isSentToday && hour >= 9 && hour <= 10) {
-      app.client.chat.postMessage({
-        token: process.env.SLACK_TOKEN,
-        channel: "general",
-        text: "Good morning! ☀️\n" + getRandomGif(),
-        as_user: true,
-      });
+    if (!isSentToday && !isWeekend() && isMorning) {
+      sendMessage();
       daysGreeted.push(day);
     }
 

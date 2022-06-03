@@ -1,6 +1,6 @@
 const emojis = require("./emojis");
-const gifs = require("../data.json");
-
+const gifs = require("../gifs.json");
+// require("../botDMs");
 const pick = (selection) =>
   selection[Math.floor(Math.random() * selection.length)];
 
@@ -12,11 +12,7 @@ async function fetchMorningGif(searchQuery = "good morning") {
     `https://api.giphy.com/v1/gifs/search?api_key=${process.env.GIPHY_API_KEY}&q=${searchQuery}`
   )
     .then((res) => res.json())
-    .then((json) => {
-      const random = Math.floor(Math.random() * json.data.length);
-
-      return json.data[random].images.original.url;
-    });
+    .then((gifs) => pick(gifs.data).images.original.url);
 }
 
 function isWeekend(date = new Date()) {
