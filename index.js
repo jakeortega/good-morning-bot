@@ -2,7 +2,8 @@ const { App, LogLevel } = require("@slack/bolt");
 const { isWeekend, getRandomEmoji, fetchMorningGif } = require("./utils");
 const botDMs = require("./botDMs");
 
-require("dotenv").config();
+const { SLACK_TOKEN, SLACK_USER_TOKEN, SLACK_SIGNING_SECRET, SLACK_APP_TOKEN, USER_ID, GENERAL_CHANNEL_ID, PORT } =
+  process.env;
 
 const app = new App({
   token: process.env.SLACK_TOKEN,
@@ -31,12 +32,10 @@ const sendMessage = async () => {
   const gif = await fetchMorningGif();
 
   await app.client.chat.postMessage({
-    token: process.env.SLACK_TOKEN,
-    channel: "general",
+    token: as_user ? SLACK_USER_TOKEN : SLACK_TOKEN,
+    channel,
     text: `Good morning! ${getRandomEmoji()}\n ${gif}`,
-    username: "Daniel Bellmas",
-    icon_url:
-      "https://user-images.githubusercontent.com/76179660/171856608-c109f0bf-4d2b-48d0-b505-2133cf7534d9.jpg",
+    as_user
   });
 };
 // sendMessage();
