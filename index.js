@@ -5,7 +5,9 @@ const botDMs = require('./utils/botDMs');
 
 require('dotenv').config();
 
-const { SLACK_TOKEN, SLACK_USER_TOKEN, SLACK_SIGNING_SECRET, SLACK_APP_TOKEN, USER_ID, PORT } = process.env;
+const { SLACK_TOKEN, SLACK_USER_TOKEN, SLACK_SIGNING_SECRET, SLACK_APP_TOKEN, USER_ID } = process.env;
+
+console.log({ SLACK_TOKEN, SLACK_USER_TOKEN, SLACK_SIGNING_SECRET, SLACK_APP_TOKEN, USER_ID });
 
 const app = new App({
   token: SLACK_TOKEN,
@@ -16,9 +18,7 @@ const app = new App({
 });
 
 (async () => {
-  const port = 3000;
-
-  await app.start(PORT || port);
+  await app.start(process.env.PORT || 3000);
   await botDMs(app);
 
   console.log(`🔥 Slack Bolt app is running on port ${port}! 🔥`);
