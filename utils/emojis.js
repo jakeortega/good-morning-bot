@@ -1,3 +1,3 @@
-const goodMorningEmojiList = ["🌅", "☀", "🌄", "🐓", "🌞", "🌱", "☀"];
+const goodMorningEmojiList = ['🌅', '☀', '🌄', '🐓', '🌞', '🌱', '☀'];
 
 module.exports = goodMorningEmojiList;

@@ -1,34 +1,36 @@
-const { App, LogLevel } = require("@slack/bolt");
-const { isWeekend, getRandomEmoji, fetchMorningGif } = require("./utils");
-const botDMs = require("./botDMs");
+const { App, LogLevel } = require('@slack/bolt');
+const { isWeekend, getRandomEmoji, fetchMorningGif } = require('./utils');
+const botDMs = require('./utils/botDMs');
 
+require('dotenv').config();
 const { SLACK_TOKEN, SLACK_USER_TOKEN, SLACK_SIGNING_SECRET, SLACK_APP_TOKEN, USER_ID, GENERAL_CHANNEL_ID, PORT } =
   process.env;
 
 const app = new App({
-  token: process.env.SLACK_TOKEN,
-  signingSecret: process.env.SLACK_SIGNING_SECRET,
+  token: SLACK_TOKEN,
+  signingSecret: SLACK_SIGNING_SECRET,
   socketMode: true,
-  appToken: process.env.SLACK_APP_TOKEN,
-  logLevel: LogLevel.DEBUG,
+  appToken: SLACK_APP_TOKEN,
+  logLevel: LogLevel.DEBUG
 });
 
 (async () => {
   const port = 3000;
 
-  await app.start(process.env.PORT || port);
+  await app.start(PORT || port);
   await botDMs(app);
 
   console.log(`🔥 Slack Bolt app is running on port ${port}! 🔥`);
+  await sendMessage();
 })();
 
 /* Scheduled Good Morning */
-
-const NUMBER_OF_DAYS = 5;
-let daysGreeted = [];
 // TODO add a command that adds to daysGreeted and subtracts from the NUMBER_OF_DAYS array if there's a day off
 
-const sendMessage = async () => {
+const NUM_OF_WORK_DAYS = 5;
+let daysGreeted = [];
+
+const sendMessage = async ({ channel = GENERAL_CHANNEL_ID, as_user = true } = {}) => {
   const gif = await fetchMorningGif();
 
   await app.client.chat.postMessage({
@@ -38,9 +40,8 @@ const sendMessage = async () => {
     as_user
   });
 };
-// sendMessage();
 
-function loop() {
+(function loop() {
   setTimeout(() => {
     const day = new Date().getDay();
     const hour = new Date().getHours();
@@ -52,13 +53,11 @@ function loop() {
       daysGreeted.push(day);
     }
 
-    if (daysGreeted.length === NUMBER_OF_DAYS) {
+    if (daysGreeted.length === NUM_OF_WORK_DAYS) {
       daysGreeted = [];
     }
 
     console.log({ daysGreeted, isSentToday });
     loop();
   }, 1000 * 60 * 30 * Math.random());
-}
-
-loop();
+})();
