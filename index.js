@@ -17,13 +17,12 @@ const app = new App({
 });
 
 (async () => {
-  const port = process.env.PORT || 3000;
-
-  await app.start(port);
+  await app.start();
   await botDMs(app);
 
-  console.log(`🔥 Slack Bolt app is running on port ${port}! 🔥`);
-  // await sendMessage(); // TODO Remove this line
+  console.log(`🔥 Slack Bolt app is running! 🔥`);
+  // console.log(`🔥 Slack Bolt app is running on port ${port}! 🔥`);
+  await sendMessage(); // TODO Remove this line
 })();
 
 /* Scheduled Good Morning */
