@@ -2,12 +2,11 @@
 const { App, LogLevel } = require('@slack/bolt');
 const { isWeekend, getRandomEmoji, fetchMorningGif } = require('./utils');
 const botDMs = require('./utils/botDMs');
+const { isDayOff } = require('./utils/dayOff');
 
 require('dotenv').config();
 
 const { SLACK_TOKEN, SLACK_USER_TOKEN, SLACK_SIGNING_SECRET, SLACK_APP_TOKEN, USER_ID } = process.env;
-
-console.log({ SLACK_TOKEN, SLACK_USER_TOKEN, SLACK_SIGNING_SECRET, SLACK_APP_TOKEN, USER_ID });
 
 const app = new App({
   token: SLACK_TOKEN,
@@ -18,20 +17,20 @@ const app = new App({
 });
 
 (async () => {
-  const port = process.env.PORT || port;
+  const port = process.env.PORT || 3000;
 
   await app.start(port);
   await botDMs(app);
 
   console.log(`🔥 Slack Bolt app is running on port ${port}! 🔥`);
-  await sendMessage();
+  // await sendMessage(); // TODO Remove this line
 })();
 
 /* Scheduled Good Morning */
-// TODO add a command that adds to daysGreeted and subtracts from the NUMBER_OF_DAYS array if there's a day off
 
 const NUM_OF_WORK_DAYS = 5;
 let daysGreeted = [];
+let daysOffCount = 0;
 
 const sendMessage = async ({ channel = 'general', as_user = true } = {}) => {
   const gif = await fetchMorningGif();
@@ -52,12 +51,17 @@ const sendMessage = async ({ channel = 'general', as_user = true } = {}) => {
     const isMorning = hour >= 8 && hour <= 9;
 
     if (!isSentToday && !isWeekend() && isMorning) {
-      sendMessage();
-      daysGreeted.push(day);
+      if (!isDayOff()) {
+        sendMessage();
+        daysGreeted.push(day);
+      } else {
+        daysOffCount++;
+      }
     }
 
-    if (daysGreeted.length === NUM_OF_WORK_DAYS) {
+    if (daysGreeted.length === NUM_OF_WORK_DAYS - daysOffCount) {
       daysGreeted = [];
+      daysOffCount = 0;
     }
 
     console.log({ daysGreeted, isSentToday });

@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@hebcal/rest-api": "^3.18.0",
     "@slack/bolt": "^3.11.1",
     "dotenv": "^16.0.1"
   },
