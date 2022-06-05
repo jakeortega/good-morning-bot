@@ -6,7 +6,7 @@ const { isDayOff } = require('./utils/dayOff');
 
 require('dotenv').config();
 
-const { SLACK_BOT_TOKEN, SLACK_USER_TOKEN, SLACK_SIGNING_SECRET, SLACK_APP_TOKEN, USER_ID } = process.env;
+const { SLACK_BOT_TOKEN, SLACK_USER_TOKEN, SLACK_SIGNING_SECRET, SLACK_APP_TOKEN } = process.env;
 
 const HOUR_DIFFERENCE = 3;
 
@@ -56,6 +56,8 @@ const sendMessage = async ({ channel = 'general', as_user = true } = {}) => {
     if (!isSentToday && !isWeekend() && isMorning) {
       if (!isDayOff()) {
         sendMessage();
+        console.log('!!! Sent a good morning message !!!');
+
         daysGreeted.push(day);
       } else {
         daysOffCount++;
@@ -69,5 +71,5 @@ const sendMessage = async ({ channel = 'general', as_user = true } = {}) => {
 
     console.log({ daysGreeted, isSentToday, hour });
     loop();
-  }, 1000 * 60 * 30 * Math.random());
+  }, 1000 * 60 /* * 30 * Math.random() */);
 })();
