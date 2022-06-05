@@ -8,6 +8,8 @@ require('dotenv').config();
 
 const { SLACK_BOT_TOKEN, SLACK_USER_TOKEN, SLACK_SIGNING_SECRET, SLACK_APP_TOKEN, USER_ID } = process.env;
 
+const HOUR_DIFFERENCE = 3;
+
 const app = new App({
   token: SLACK_BOT_TOKEN,
   signingSecret: SLACK_SIGNING_SECRET,
@@ -21,7 +23,6 @@ const app = new App({
   await botDMs(app);
 
   console.log(`🔥 Slack Bolt app is running! 🔥`);
-  // console.log(`🔥 Slack Bolt app is running on port ${port}! 🔥`);
   await sendMessage(); // TODO Remove this line
 })();
 
@@ -45,9 +46,13 @@ const sendMessage = async ({ channel = 'general', as_user = true } = {}) => {
 (function loop() {
   setTimeout(() => {
     const day = new Date().getDay();
-    const hour = new Date().getHours();
+    // let lastDay = date;
+    const hour = new Date().getHours() + HOUR_DIFFERENCE;
     const isSentToday = daysGreeted.includes(day);
     const isMorning = hour >= 8 && hour <= 9;
+
+    // TODO Please check how I can be in the context of the same day in the loop
+    // if(lastDay!==day)
 
     if (!isSentToday && !isWeekend() && isMorning) {
       if (!isDayOff()) {
@@ -63,7 +68,7 @@ const sendMessage = async ({ channel = 'general', as_user = true } = {}) => {
       daysOffCount = 0;
     }
 
-    console.log({ daysGreeted, isSentToday });
+    console.log({ daysGreeted, isSentToday, hour });
     loop();
   }, 1000 * 60 * 30 * Math.random());
 })();
