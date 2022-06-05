@@ -23,6 +23,7 @@ const app = new App({
   await botDMs(app);
 
   console.log(`🔥 Slack Bolt app is running! 🔥`);
+  await sendMessage();
 })();
 
 /* Scheduled Good Morning */
