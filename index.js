@@ -1,4 +1,3 @@
-// TODO Migrate to typescript
 const { App, LogLevel } = require('@slack/bolt');
 const { isWeekend, getRandomEmoji, fetchMorningGif } = require('./utils');
 const botDMs = require('./utils/botDMs');
@@ -23,14 +22,9 @@ const app = new App({
   await botDMs(app);
 
   console.log(`🔥 Slack Bolt app is running! 🔥`);
-  await sendMessage();
 })();
 
 /* Scheduled Good Morning */
-
-const NUM_OF_WORK_DAYS = 5;
-let daysGreeted = [];
-let daysOffCount = 0;
 
 const sendMessage = async ({ channel = 'general', as_user = true } = {}) => {
   const gif = await fetchMorningGif();
@@ -43,34 +37,29 @@ const sendMessage = async ({ channel = 'general', as_user = true } = {}) => {
   });
 };
 
+let isSentToday = false;
+let prevDay = new Date().getDay();
+
 (function loop() {
   setTimeout(() => {
     const day = new Date().getDay();
-    // let lastDay = date;
     const hour = new Date().getHours() + HOUR_DIFFERENCE;
-    const isSentToday = daysGreeted.includes(day);
     const isMorning = hour >= 8 && hour <= 9;
 
-    // TODO Please check how I can be in the context of the same day in the loop
-    // if(lastDay!==day)
+    if (prevDay !== day) {
+      isSentToday = false;
+      prevDay = day;
+    }
 
     if (!isSentToday && !isWeekend() && isMorning) {
       if (!isDayOff()) {
         sendMessage();
+        isSentToday = true;
         console.log('!!! Sent a good morning message !!!');
-
-        daysGreeted.push(day);
-      } else {
-        daysOffCount++;
       }
     }
 
-    if (daysGreeted.length === NUM_OF_WORK_DAYS - daysOffCount) {
-      daysGreeted = [];
-      daysOffCount = 0;
-    }
-
-    console.log({ daysGreeted, isSentToday, hour });
+    console.log({ isSentToday, prevDay, day });
     loop();
-  }, 1000 * 60 /* * 30 * Math.random() */);
+  }, 1000 * 60 * 30 * Math.random());
 })();
