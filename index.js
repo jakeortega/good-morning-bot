@@ -7,8 +7,6 @@ require('dotenv').config();
 
 const { SLACK_BOT_TOKEN, SLACK_USER_TOKEN, SLACK_SIGNING_SECRET, SLACK_APP_TOKEN, NODE_ENV } = process.env;
 
-const HOUR_DIFFERENCE = 3;
-
 const app = new App({
   token: SLACK_BOT_TOKEN,
   signingSecret: SLACK_SIGNING_SECRET,
@@ -38,14 +36,13 @@ const sendMessage = async ({ channel = 'general', as_user = true } = {}) => {
 };
 
 let isSentToday = false;
-let prevDay = new Date().getDay();
+let prevDay = new Date().getUTCDay();
 
 (function loop() {
   setTimeout(() => {
-    const day = new Date().getDay();
-    const hour = new Date().getHours() + HOUR_DIFFERENCE;
-    const isMorning = hour === 21;
-
+    const day = new Date().getUTCDay();
+    const hour = new Date().getUTCHours();
+    const isMorning = hour === 5;
     console.log({ hour, day, prevDay });
 
     if (prevDay !== day) {
@@ -63,5 +60,5 @@ let prevDay = new Date().getDay();
 
     console.log({ isSentToday, prevDay, day });
     loop();
-  }, 1000 /* * 60 * 30 * Math.random() */);
+  }, 1000 * 60 * 30 * Math.random());
 })();
