@@ -5,7 +5,7 @@ const { isDayOff } = require('./utils/dayOff');
 
 require('dotenv').config();
 
-const { SLACK_BOT_TOKEN, SLACK_USER_TOKEN, SLACK_SIGNING_SECRET, SLACK_APP_TOKEN } = process.env;
+const { SLACK_BOT_TOKEN, SLACK_USER_TOKEN, SLACK_SIGNING_SECRET, SLACK_APP_TOKEN, NODE_ENV } = process.env;
 
 const HOUR_DIFFERENCE = 3;
 
@@ -44,7 +44,9 @@ let prevDay = new Date().getDay();
   setTimeout(() => {
     const day = new Date().getDay();
     const hour = new Date().getHours() + HOUR_DIFFERENCE;
-    const isMorning = hour >= 8 && hour <= 9;
+    const isMorning = hour === 21;
+
+    console.log({ hour, day, prevDay });
 
     if (prevDay !== day) {
       isSentToday = false;
@@ -61,5 +63,5 @@ let prevDay = new Date().getDay();
 
     console.log({ isSentToday, prevDay, day });
     loop();
-  }, 1000 * 60 * 30 * Math.random());
+  }, 1000 /* * 60 * 30 * Math.random() */);
 })();
