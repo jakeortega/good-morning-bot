@@ -12,17 +12,19 @@ const app = new App({
   signingSecret: SLACK_SIGNING_SECRET,
   socketMode: true,
   appToken: SLACK_APP_TOKEN,
-  logLevel: LogLevel.DEBUG
+  logLevel: NODE_ENV === 'production' ? LogLevel.INFO : LogLevel.DEBUG
 });
 
 (async () => {
   await app.start();
   await botDMs(app);
 
-  console.log(`🔥 Slack Bolt app is running! 🔥`);
+  console.info(`🔥 Slack Bolt app is running! 🔥`);
 })();
 
-/* Scheduled Good Morning */
+/*********************
+ Scheduled Good Morning
+ **********************/
 
 const sendMessage = async ({ channel = 'general', as_user = true } = {}) => {
   const gif = await fetchMorningGif();
@@ -35,6 +37,7 @@ const sendMessage = async ({ channel = 'general', as_user = true } = {}) => {
   });
 };
 
+let isDayOffToday = false;
 let isSentToday = false;
 let prevDay = new Date().getUTCDay();
 
@@ -42,23 +45,27 @@ let prevDay = new Date().getUTCDay();
   setTimeout(() => {
     const day = new Date().getUTCDay();
     const hour = new Date().getUTCHours();
-    const isMorning = hour === 5;
-    console.log({ hour, day, prevDay });
+    const isMorning = hour === 5; //* 5am UTC => 8am local
 
     if (prevDay !== day) {
+      //* Reset all flags on new day
       isSentToday = false;
       prevDay = day;
+      isDayOffToday = false;
     }
 
+    //* Optionally: add !isDayOffToday check in the if statement to not even enter the if
     if (!isSentToday && !isWeekend() && isMorning) {
-      if (!isDayOff()) {
+      isDayOffToday = isDayOffToday || isDayOff(); //* A cool way to fetch only once a day
+
+      if (!isDayOffToday) {
         sendMessage();
         isSentToday = true;
-        console.log('!!! Sent a good morning message !!!');
+        console.info('!!! Sent a good morning message !!!');
       }
     }
 
-    console.log({ isSentToday, prevDay, day });
+    console.info({ isSentToday, prevDay, day });
     loop();
   }, 1000 * 60 * 30 * Math.random());
 })();

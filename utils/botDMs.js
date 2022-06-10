@@ -1,4 +1,4 @@
-const { fetchMorningGif, getRandomEmoji } = require('./index');
+const { fetchMorningGif, getRandomEmoji } = require('.');
 
 module.exports = async app => {
   app.message(/gm/, async ({ message, say }) => {

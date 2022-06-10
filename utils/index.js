@@ -1,5 +1,6 @@
 const emojis = require('./emojis');
 const gifs = require('../gifs.json');
+
 const pick = selection => selection[Math.floor(Math.random() * selection.length)];
 
 const getRandomGif = () => pick(gifs.data).images.original.url;
