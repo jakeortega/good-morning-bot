@@ -1,10 +1,10 @@
-const { App, LogLevel } = require('@slack/bolt');
-const { isWeekend, getRandomEmoji, fetchMorningGif } = require('./utils');
-const botDMs = require('./utils/botDMs');
-const { isDayOff } = require('./utils/dayOff');
+import { App, LogLevel } from '@slack/bolt';
+import { isWeekend, getRandomEmoji, fetchMorningGif } from './utils';
+import botDMs from './utils/botDMs';
+import { isDayOff } from './utils/dayOff';
+import { config } from 'dotenv';
 
-require('dotenv').config();
-
+config();
 const { SLACK_BOT_TOKEN, SLACK_USER_TOKEN, SLACK_SIGNING_SECRET, SLACK_APP_TOKEN, NODE_ENV } = process.env;
 
 const app = new App({

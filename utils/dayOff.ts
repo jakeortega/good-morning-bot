@@ -1,5 +1,5 @@
-const { HebrewCalendar, Location } = require('@hebcal/core');
-const { eventsToClassicApi } = require('@hebcal/rest-api');
+import { HebrewCalendar, Location } from '@hebcal/core';
+import { eventsToClassicApi } from '@hebcal/rest-api';
 
 const date = new Date();
 
@@ -13,15 +13,22 @@ const options = {
   shabbatMevarchim: true
 };
 
-const getHolidays = () => {
+interface Holiday {
+  date: string;
+  title: string;
+  yomtov: boolean;
+  category: string;
+}
+
+const getHolidays = (): Holiday[] => {
   const events = HebrewCalendar.calendar(options);
   const apiResult = eventsToClassicApi(events, options);
 
-  return apiResult.items
+  return (apiResult.items as Holiday[])
     .filter(({ yomtov }) => yomtov)
     .map(({ date, title, yomtov, category }) => ({ date, title, yomtov, category }));
 };
-const isDayOff = (date = new Date().toISOString().slice(0, 10)) =>
+const isDayOff = (date = new Date().toISOString().slice(0, 10)): boolean =>
   !!getHolidays().find(({ date: holidayDate }) => holidayDate === date);
 
-module.exports = { isDayOff };
+export { isDayOff };
