@@ -3,5 +3,5 @@
 
 ## Resources
 
-[Web API](https://api.slack.com/methods?query=chat)
-[VS code examples](https://github.dev/slackapi/bolt-js/blob/main/examples/getting-started-typescript/src/app.ts)
+- [Web API](https://api.slack.com/methods?query=chat)
+- [VS code examples](https://github.dev/slackapi/bolt-js/blob/main/examples/getting-started-typescript/src/app.ts)
