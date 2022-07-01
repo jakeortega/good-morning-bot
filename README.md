@@ -1,5 +1,7 @@
 # Good Morning Bot
-<img width="660" alt="googdmornig" src="https://user-images.githubusercontent.com/76179660/175565975-2a457367-d279-4db5-90af-01293110dcf9.png">
+
+<img width="657" alt="Good Morning" src="https://user-images.githubusercontent.com/76179660/176921998-b35b24c0-0c5f-40c4-a8ca-5d65a1e2d87e.png">
+
 
 ## Resources
 
