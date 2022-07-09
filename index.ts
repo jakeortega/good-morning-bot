@@ -43,18 +43,19 @@ let prevDay = new Date().getUTCDay();
 
 (function loop() {
   setTimeout(() => {
-    const day = new Date().getUTCDay();
+    const currentDay = new Date().getUTCDay();
     const hour = new Date().getUTCHours();
     const isMorning = hour === 5; //* 5am UTC => 8am local
 
-    if (prevDay !== day) {
+    if (prevDay !== currentDay) {
       //* Reset all flags on new day
       isSentToday = false;
-      prevDay = day;
+      prevDay = currentDay;
       isDayOffToday = false;
     }
 
-    //* Optionally: add !isDayOffToday check in the if statement to not even enter the if, if it's a day off
+    //* Optionally: add !isDayOffToday check in the if
+    //* statement to not even enter the if, if it's a day off
     if (!isSentToday && !isWeekend() && isMorning) {
       isDayOffToday = isDayOffToday || isDayOff(); //* A cool way to check only once a day
 
@@ -65,7 +66,7 @@ let prevDay = new Date().getUTCDay();
       }
     }
 
-    console.info({ isSentToday, prevDay, day });
+    console.info({ isSentToday, prevDay, currentDay });
     loop();
   }, 1000 * 60 * 30 * Math.random());
 })();
