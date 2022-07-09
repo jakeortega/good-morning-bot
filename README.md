@@ -19,7 +19,8 @@ cd good-morning-bot
 npm install 
 ```
 
-Before you can run the project you'll need some environment variables:
+> :bulb: Before you can run the project you'll need some environment variables 👇
+
 
 ## Environment Variables
 
