@@ -21,7 +21,7 @@ async function fetchMorningGif(searchQuery = 'good morning') {
 }
 
 function isWeekend(date = new Date()): boolean {
-  return date.getDay() === 5 || date.getDay() === 6;
+  return date.getDay() === 0 || date.getDay() === 6; // 0 - Sunday, 6 - Saturday
 }
 
 export { isWeekend, getRandomGif, getRandomEmoji, fetchMorningGif };
