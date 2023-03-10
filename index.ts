@@ -32,7 +32,8 @@ const sendMessage = async ({ channel = 'general', as_user = true } = {}) => {
   await app.client.chat.postMessage({
     token: as_user ? SLACK_USER_TOKEN : SLACK_BOT_TOKEN,
     channel,
-    text: `Good morning! ${getRandomEmoji()}\n ${gif}`,
+    // text: `Good morning! ${getRandomEmoji()}\n ${gif}`,
+    text: `Good morning! ${getRandomEmoji()}`,
     as_user
   });
 };
@@ -45,7 +46,7 @@ let prevDay = new Date().getUTCDay();
   setTimeout(() => {
     const currentDay = new Date().getUTCDay();
     const hour = new Date().getUTCHours();
-    const isMorning = hour === 5; //* 5am UTC => 8am local
+    const isMorning = hour === 8; //* 5am UTC => 8am local
 
     if (prevDay !== currentDay) {
       //* Reset all flags on new day
@@ -56,7 +57,8 @@ let prevDay = new Date().getUTCDay();
 
     //* Optionally: add !isDayOffToday check in the if
     //* statement to not even enter the if, if it's a day off
-    if (!isSentToday && !isWeekend() && isMorning) {
+    // if (!isSentToday && !isWeekend() && isMorning) {
+    if (!isWeekend()) {
       isDayOffToday = isDayOffToday || isDayOff(); //* A cool way to check only once a day
 
       if (!isDayOffToday) {
@@ -68,5 +70,5 @@ let prevDay = new Date().getUTCDay();
 
     console.info({ isSentToday, prevDay, currentDay });
     loop();
-  }, 1000 * 60 * 30 * Math.random());
+  }, 1000 * 60 * 1 * Math.random()); // 1000 * 60 * Math.random()
 })();
