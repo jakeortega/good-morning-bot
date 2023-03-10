@@ -70,5 +70,5 @@ let prevDay = new Date().getUTCDay();
 
     console.info({ isSentToday, prevDay, currentDay });
     loop();
-  }, 1000 * 60 * 1 * Math.random()); // 1000 * 60 * 30 * Math.random()
+  }, 1000 * 60 * 30 * Math.random()); // 1000 * 60 * 30 * Math.random()
 })();
