@@ -58,7 +58,7 @@ let prevDay = new Date().getUTCDay();
     //* Optionally: add !isDayOffToday check in the if
     //* statement to not even enter the if, if it's a day off
     // if (!isSentToday && !isWeekend() && isMorning) {
-    if (!isSentToday && !isWeekend()) {
+    if (!isSentToday && !isWeekend() && isMorning) {
       isDayOffToday = isDayOffToday || isDayOff(); //* A cool way to check only once a day
 
       if (!isDayOffToday) {
