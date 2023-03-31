@@ -46,7 +46,7 @@ let prevDay = new Date().getUTCDay();
   setTimeout(() => {
     const currentDay = new Date().getUTCDay();
     const hour = new Date().getUTCHours();
-    const isMorning = hour === 8; //* 5am UTC => 8am local
+    const isMorning = hour === 7; //* 5am UTC => 8am local
 
     if (prevDay !== currentDay) {
       //* Reset all flags on new day
